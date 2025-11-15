@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>텍스트 품질 비교 User Study</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background-color: #f5f5f7;
+      color: #111827;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      margin-top: 0;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      margin-top: 16px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .intro-list {
+      padding-left: 18px;
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+
+    label {
+      font-size: 0.95rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 0.95rem;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 18px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      background: #111827;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      gap: 8px;
+    }
+
+    .btn-row-right {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .status-text {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .progress-wrapper {
+      margin-bottom: 16px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-inner {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #111827, #4b5563);
+      border-radius: 999px;
+      transition: width 0.2s ease-out;
+    }
+
+    .question-header {
+      margin-bottom: 12px;
+    }
+
+    .question-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .question-prompt {
+      font-size: 0.95rem;
+      color: #4b5563;
+      white-space: pre-wrap;
+    }
+
+    .texts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    @media (min-width: 800px) {
+      .texts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .text-card {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      padding: 12px 12px 10px;
+      font-size: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .text-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+
+    .text-content {
+      white-space: pre-wrap;
+      line-height: 1.4;
+    }
+
+    .choice-group {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .choice-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+
+    .radio-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 6px 10px;
+      background: white;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .radio-pill input {
+      margin: 0;
+    }
+
+    .radio-pill span {
+      font-size: 0.9rem;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .result-textarea {
+      width: 100%;
+      min-height: 260px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.85rem;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      box-sizing: border-box;
+      margin-top: 10px;
+      background: #f9fafb;
+    }
+
+    .tag {
+      display: inline-flex;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4338ca;
+      margin-bottom: 4px;
+    }
+
+    .small {
+      font-size: 0.85rem;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>텍스트 품질 비교 User Study</h1>
+    <div class="small" style="color:#6b7280;">5개 모델이 생성한 문장을 비교 평가하는 실험입니다.</div>
+
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="card">
+      <h2>참여 안내</h2>
+      <ul class="intro-list">
+        <li>각 문항마다 <strong>5개의 문장</strong>이 제시됩니다.</li>
+        <li>각 문항에 대해
+          <strong>① 더 자연스러운 문장</strong>,
+          <strong>② 더 목적에 맞는 문장</strong>을 각각 <strong>하나씩</strong> 골라주세요.
+        </li>
+        <li>총 문항 수는 <strong>30개</strong>이며, 문항별로 길이는 비슷하게 맞춰져 있습니다.</li>
+        <li>모든 문항에 답변한 후, 결과 JSON을 복사/다운로드하여 연구자에게 전달해 주세요.</li>
+      </ul>
+
+      <div style="margin-top: 16px;">
+        <label for="participant-id">
+          참여자 ID (선택, 익명 코드 사용 가능)
+        </label>
+        <input id="participant-id" type="text" placeholder="예: P01, tester_001 등" />
+        <div class="status-text" id="load-status">질문 데이터를 불러오는 중입니다...</div>
+        <div class="error" id="load-error" style="display:none;"></div>
+      </div>
+
+      <div class="btn-row-right">
+        <button id="start-btn" disabled>설문 시작하기</button>
+      </div>
+    </div>
+
+    <!-- Survey Screen -->
+    <div id="survey-screen" class="card hidden">
+      <div class="progress-wrapper">
+        <div class="progress-label">
+          <span id="progress-text">문항 1 / 30</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-inner" id="progress-inner"></div>
+        </div>
+      </div>
+
+      <div class="question-header">
+        <div class="question-title" id="question-title"></div>
+        <div class="question-prompt" id="question-prompt"></div>
+      </div>
+
+      <div class="texts-grid" id="texts-container">
+        <!-- 5개의 텍스트 카드가 여기 렌더링됩니다 -->
+      </div>
+
+      <div class="choice-group">
+        <div class="choice-title">1. 더 자연스러운 문장을 선택해주세요.</div>
+        <div class="radio-group" id="naturalness-options"></div>
+        <div class="note">옵션 A~E 중에서 하나만 선택 가능합니다.</div>
+      </div>
+
+      <div class="choice-group">
+        <div class="choice-title">2. 더 목적에 잘 부합한다고 느끼는 문장을 선택해주세요.</div>
+        <div class="radio-group" id="goal-options"></div>
+        <div class="note">위와 독립적인 선택입니다. 같은 옵션을 선택해도 됩니다.</div>
+      </div>
+
+      <div class="btn-row">
+        <button id="prev-btn" class="secondary">이전 문항</button>
+        <button id="next-btn">다음 문항</button>
+      </div>
+    </div>
+
+    <!-- Thanks / Result Screen -->
+    <div id="thanks-screen" class="card hidden">
+      <span class="tag">완료</span>
+      <h2>참여해 주셔서 감사합니다!</h2>
+      <p class="small">
+        아래 JSON 데이터를 복사하거나 파일로 다운로드하여 연구자에게 전달해 주세요.
+        (깃허브/이메일/메신저 등 편한 방식으로 보내면 됩니다.)
+      </p>
+
+      <textarea id="result-json" class="result-textarea" readonly></textarea>
+
+      <div class="btn-row-right">
+        <button id="copy-btn" class="secondary">JSON 복사하기</button>
+        <button id="download-btn">JSON 파일 다운로드</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ------------------------------
+    // 설정
+    // ------------------------------
+    const METHODS = [
+      { id: "m1", label: "옵션 A" },
+      { id: "m2", label: "옵션 B" },
+      { id: "m3", label: "옵션 C" },
+      { id: "m4", label: "옵션 D" },
+      { id: "m5", label: "옵션 E" },
+    ];
+
+    const QUESTIONS_JSON_PATH = "questions.json";
+
+    // ------------------------------
+    // 상태 변수
+    // ------------------------------
+    let QUESTIONS = [];
+    let responses = [];
+    let currentIndex = 0;
+    let startedAt = null;
+    let finishedAt = null;
+    let participantId = "";
+
+    // ------------------------------
+    // DOM 요소
+    // ------------------------------
+    const introScreen = document.getElementById("intro-screen");
+    const surveyScreen = document.getElementById("survey-screen");
+    const thanksScreen = document.getElementById("thanks-screen");
+
+    const loadStatus = document.getElementById("load-status");
+    const loadError = document.getElementById("load-error");
+    const startBtn = document.getElementById("start-btn");
+    const participantInput = document.getElementById("participant-id");
+
+    const progressText = document.getElementById("progress-text");
+    const progressPercent = document.getElementById("progress-percent");
+    const progressInner = document.getElementById("progress-inner");
+
+    const questionTitleEl = document.getElementById("question-title");
+    const questionPromptEl = document.getElementById("question-prompt");
+    const textsContainer = document.getElementById("texts-container");
+
+    const naturalnessOptionsEl = document.getElementById("naturalness-options");
+    const goalOptionsEl = document.getElementById("goal-options");
+
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    const resultTextarea = document.getElementById("result-json");
+    const copyBtn = document.getElementById("copy-btn");
+    const downloadBtn = document.getElementById("download-btn");
+
+    // ------------------------------
+    // 유틸
+    // ------------------------------
+    function optionLabelFromIndex(i) {
+      return String.fromCharCode(65 + i); // 0 -> A, 1 -> B, ...
+    }
+
+    function ensureResponseObject(index) {
+      if (!responses[index]) {
+        const q = QUESTIONS[index];
+        responses[index] = {
+          questionId: q.id,
+          naturalness: null,  // 0~4
+          goalAlignment: null // 0~4
+        };
+      }
+      return responses[index];
+    }
+
+    function updateNextButtonState() {
+      const r = responses[currentIndex];
+      const ok =
+        r &&
+        r.naturalness !== null &&
+        r.goalAlignment !== null;
+      nextBtn.disabled = !ok;
+    }
+
+    function updateProgress() {
+      const total = QUESTIONS.length;
+      const current = currentIndex + 1;
+      progressText.textContent = `문항 ${current} / ${total}`;
+      const pct = Math.round((current / total) * 100);
+      progressPercent.textContent = `${pct}%`;
+      progressInner.style.width = `${pct}%`;
+
+      if (current === total) {
+        nextBtn.textContent = "완료하기";
+      } else {
+        nextBtn.textContent = "다음 문항";
+      }
+
+      prevBtn.disabled = current === 1;
+    }
+
+    // ------------------------------
+    // 렌더링
+    // ------------------------------
+    function renderQuestion(index) {
+      const q = QUESTIONS[index];
+      if (!q) return;
+
+      questionTitleEl.textContent = `문항 ${index + 1}`;
+      questionPromptEl.textContent = q.prompt || "";
+
+      // 텍스트 카드
+      textsContainer.innerHTML = "";
+      if (!q.texts || q.texts.length !== METHODS.length) {
+        const warn = document.createElement("div");
+        warn.style.color = "#b91c1c";
+        warn.textContent = `texts.length가 ${METHODS.length}가 아닙니다. questions.json을 확인하세요.`;
+        textsContainer.appendChild(warn);
+      } else {
+        q.texts.forEach((text, i) => {
+          const card = document.createElement("div");
+          card.className = "text-card";
+
+          const labelEl = document.createElement("div");
+          labelEl.className = "text-label";
+          labelEl.textContent = `옵션 ${optionLabelFromIndex(i)}`;
+
+          const contentEl = document.createElement("div");
+          contentEl.className = "text-content";
+          contentEl.textContent = text;
+
+          card.appendChild(labelEl);
+          card.appendChild(contentEl);
+          textsContainer.appendChild(card);
+        });
+      }
+
+      // 선택 상태 복원
+      const r = ensureResponseObject(index);
+
+      // 라디오 그룹 렌더링
+      renderRadioGroup(
+        naturalnessOptionsEl,
+        "naturalness",
+        r.naturalness
+      );
+      renderRadioGroup(
+        goalOptionsEl,
+        "goalAlignment",
+        r.goalAlignment
+      );
+
+      updateProgress();
+      updateNextButtonState();
+    }
+
+    function renderRadioGroup(container, field, selectedIndex) {
+      container.innerHTML = "";
+
+      METHODS.forEach((m, i) => {
+        const label = document.createElement("label");
+        label.className = "radio-pill";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = `radio-${field}`;
+        input.value = String(i);
+        input.checked = selectedIndex === i;
+
+        input.addEventListener("change", () => {
+          const r = ensureResponseObject(currentIndex);
+          r[field] = i;
+          updateNextButtonState();
+        });
+
+        const span = document.createElement("span");
+        span.textContent = `옵션 ${optionLabelFromIndex(i)}`;
+
+        label.appendChild(input);
+        label.appendChild(span);
+        container.appendChild(label);
+      });
+    }
+
+    // ------------------------------
+    // 흐름 제어
+    // ------------------------------
+    function startSurvey() {
+      participantId = (participantInput.value || "").trim();
+      startedAt = new Date();
+
+      introScreen.classList.add("hidden");
+      surveyScreen.classList.remove("hidden");
+
+      currentIndex = 0;
+      renderQuestion(currentIndex);
+    }
+
+    function goPrev() {
+      if (currentIndex === 0) return;
+      currentIndex -= 1;
+      renderQuestion(currentIndex);
+    }
+
+    function goNextOrFinish() {
+      const lastIndex = QUESTIONS.length - 1;
+      if (currentIndex < lastIndex) {
+        currentIndex += 1;
+        renderQuestion(currentIndex);
+      } else {
+        finishSurvey();
+      }
+    }
+
+    function finishSurvey() {
+      finishedAt = new Date();
+
+      const result = {
+        participantId: participantId || null,
+        startedAt: startedAt ? startedAt.toISOString() : null,
+        finishedAt: finishedAt ? finishedAt.toISOString() : null,
+        numQuestions: QUESTIONS.length,
+        numMethods: METHODS.length,
+        methodLabels: METHODS.map((m, i) => ({
+          index: i,
+          optionLabel: optionLabelFromIndex(i),
+          id: m.id
+        })),
+        questions: QUESTIONS.map((q, idx) => {
+          const r = responses[idx] || {};
+          return {
+            questionId: q.id,
+            prompt: q.prompt || null,
+            naturalness_choice: r.naturalness !== null && r.naturalness !== undefined
+              ? {
+                  optionIndex: r.naturalness,
+                  optionLabel: optionLabelFromIndex(r.naturalness)
+                }
+              : null,
+            goal_choice: r.goalAlignment !== null && r.goalAlignment !== undefined
+              ? {
+                  optionIndex: r.goalAlignment,
+                  optionLabel: optionLabelFromIndex(r.goalAlignment)
+                }
+              : null
+          };
+        })
+      };
+
+      resultTextarea.value = JSON.stringify(result, null, 2);
+
+      surveyScreen.classList.add("hidden");
+      thanksScreen.classList.remove("hidden");
+    }
+
+    // ------------------------------
+    // 로딩 / 초기화
+    // ------------------------------
+    async function loadQuestions() {
+      try {
+        loadStatus.textContent = "questions.json을 불러오는 중입니다...";
+        const res = await fetch(QUESTIONS_JSON_PATH, { cache: "no-store" });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const data = await res.json();
+
+        // data가 { questions: [...] } 형태라고 가정
+        if (Array.isArray(data)) {
+          QUESTIONS = data;
+        } else if (Array.isArray(data.questions)) {
+          QUESTIONS = data.questions;
+        } else {
+          throw new Error("questions.json 형식이 올바르지 않습니다.");
+        }
+
+        if (QUESTIONS.length === 0) {
+          throw new Error("questions 배열이 비어 있습니다.");
+        }
+
+        loadStatus.textContent = `총 ${QUESTIONS.length}개 문항을 불러왔습니다. "설문 시작하기"를 눌러주세요.`;
+        loadError.style.display = "none";
+        startBtn.disabled = false;
+      } catch (err) {
+        console.error(err);
+        loadStatus.textContent = "";
+        loadError.style.display = "block";
+        loadError.textContent =
+          "questions.json을 불러오는 중 오류가 발생했습니다. 파일 위치와 형식을 확인하세요.";
+        startBtn.disabled = true;
+      }
+    }
+
+    // ------------------------------
+    // 이벤트 바인딩
+    // ------------------------------
+    startBtn.addEventListener("click", startSurvey);
+    prevBtn.addEventListener("click", goPrev);
+    nextBtn.addEventListener("click", goNextOrFinish);
+
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(resultTextarea.value);
+        alert("JSON이 클립보드에 복사되었습니다.");
+      } catch (e) {
+        alert("복사에 실패했습니다. 직접 선택해서 복사해 주세요.");
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      const blob = new Blob([resultTextarea.value], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      a.href = url;
+      a.download = `userstudy_result_${timestamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    window.addEventListener("load", loadQuestions);
+  </script>
+</body>
+</html>
